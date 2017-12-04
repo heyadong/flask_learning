@@ -1,0 +1,33 @@
+.question-ul{
+   list-style：none;
+   padding-left:0;
+}
+.question-ul li {
+    padding: 10px;
+    overflow: hidden;
+    border-bottom:1px solid #eee;
+}
+
+.avatar-group{
+    width:38px;
+    height:100%;
+    float:left;
+}
+.avatar-group .avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+}
+.question-group{
+    float:left;
+    width:600px;
+    margin-left:10px;
+
+}
+.question-title a{
+    color:#259;
+    font-wight:900;
+}
+.question-info{
+    text-align:right
+}
