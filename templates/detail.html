@@ -1,0 +1,23 @@
+{% extends 'bases.html' %}
+{% block title %}博客评论{% endblock %}
+{% block head %}
+     <link rel="stylesheet"  href="{{ url_for('static',filename='css/detail.css')}}">
+{% endblock %}
+{% block content %}
+    <h3 class="note-title"> {{ article.title }}</h3>
+    <p class="note-info">
+         <span>作者：{{ author_name }}</span>
+         <span>时间：2017-10-11</span>
+    </p>
+    <hr>
+    <p>{{ article.content}}</p>
+    <hr>
+    <form action="#" method="post">
+         <div class="form-group" >
+              <input type="text" class="form-control" placeholder="请输入评论" name="">
+         </div>
+         <div class="form-group" style="text-align:right">
+              <button class="btn btn-primary">立即评论</button>
+         </div>
+    </form>
+{% endblock %}
