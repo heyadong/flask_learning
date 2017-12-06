@@ -14,7 +14,7 @@
                     <p class="question-title"> <a href="{{url_for('detail',question_id=question.id)}}">{{ question.title }}</a> </p>
                     <p class="question-content">{{ question.content}} </p>
                     <div class="question-info">
-                        <span class="question-author">{{question.user }}</span>
+                        <span class="question-author">{{ user.username }}</span>
                         <span class="question-time">2017-12-1 15:35:01 </span>
                     </div>
                 </div>
