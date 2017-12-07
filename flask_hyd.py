@@ -4,6 +4,7 @@ from flask import Flask, redirect, url_for, render_template, request, g, session
 import config
 from exts import db
 from models import Users, Articles, Comments
+from sqlalchemy import or_
 import os
 
 app = Flask(__name__)
@@ -24,18 +25,13 @@ def index():
             'questions': users.article,
             'author': users
         }
-
-
-
         return render_template('indext.html', **content)
-        # else:
-        #     article = Articles.query.all()
-        #     p
-        #     content={
-        #         'questions': article,
-        #         'author': Users.query.filter_by(id=article.author_id).first()
-        #     }
-        #     return render_template('index.html', **content)
+    else:
+        articles = Articles.query.all()
+        content = {
+                'questions': articles,
+                 }
+        return render_template('indext.html', **content)
 
 
 # @app.before_request
@@ -56,6 +52,19 @@ def login():
             return redirect(url_for('index'))
         else:
             return "登陆用户或者密码输入错误，请重新输入"
+
+#  查询页面
+@app.route('/my_blog/')
+def my_blog():
+    q = request.args.get('q')
+    # articles = Articles.query.filter(Articles.title.ilike('%{}%'.format(q)))
+    articles = Articles.query.filter(or_(Articles.content.contains(q),
+                                         Articles.title.contains(q)))
+    content = {
+        'questions': articles
+    }
+    return render_template('indext.html', **content)
+
 
 
 # 钩子函数（hook) context_processor 装饰器，返回字典，所有页面都可用
@@ -110,6 +119,7 @@ def article():
 def login_out():
     # session.pop('user_id')
     del session['user_id']
+    print(session.get('user_id'))
     return redirect(url_for('register'))
 
 

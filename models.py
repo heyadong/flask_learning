@@ -29,6 +29,7 @@ class Comments(db.Model):
     article = db.relationship('Articles',backref=db.backref('comment'))
 
 #    定义引用关系，不用重复查询数据库：
-#    在Comments 表中定义 db.relationship('Articles',backref = db.backref('comment'))
+#    在Comments 表中定义 article = db.relationship('Articles',backref = db.backref('comment'))
 #    可以通过my_articles.comment 访问 Comments 模型
+#    也可以通过my_comments.artile 访问 Article 模型
 #    default 设值该列的默认值，datatime.now()返回当前时间

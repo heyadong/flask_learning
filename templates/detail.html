@@ -28,9 +28,11 @@
                    <img src="{{ url_for('static',filename='img/34.jpg')}}" class="avatar">
               </div>
               <div class="comment-group">
-                   <p>{{ comment.comment}}</p>
-                   <span class="text-align:right">{{ comment.comment_time }} </span>
-                   <span class="text-align:right">{{ author_name }}</span>
+                   <p class="comment">{{ comment.comment}}</p>
+                   <p class="comment-info">
+                       <span >{{ comment.comment_time }} </span>
+                       <span >{{ author_name }}</span>
+                   </p>
               </div>
          </li>
          {% endfor %}
