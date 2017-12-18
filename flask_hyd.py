@@ -5,6 +5,7 @@ import config
 from exts import db
 from models import Users, Articles, Comments
 from sqlalchemy import or_
+from hashx import encrypt
 import os
 
 app = Flask(__name__)
@@ -20,7 +21,7 @@ with app.app_context():
 @app.route('/')
 def index():
     if session.get('user_id'):
-        users = Users.query.filter_by(id=session.get('user_id')).first()
+        users = g.user
         content = {
             'questions': users.article,
             'author': users
@@ -29,8 +30,8 @@ def index():
     else:
         articles = Articles.query.all()
         content = {
-                'questions': articles,
-                 }
+            'questions': articles,
+        }
         return render_template('indext.html', **content)
 
 
@@ -45,7 +46,8 @@ def login():
         return render_template('login2.html')
     else:
         tellphone = request.form.get('tel')
-        password = request.form.get('password1')
+        password1 = request.form.get('password1')
+        password = encrypt(password1)
         user = Users.query.filter_by(tel=tellphone, password1=password).first()
         if user:
             session['user_id'] = user.id
@@ -53,7 +55,8 @@ def login():
         else:
             return "登陆用户或者密码输入错误，请重新输入"
 
-#  查询页面
+
+# 查询页面
 @app.route('/my_blog/')
 def my_blog():
     q = request.args.get('q')
@@ -66,13 +69,20 @@ def my_blog():
     return render_template('indext.html', **content)
 
 
-
 # 钩子函数（hook) context_processor 装饰器，返回字典，所有页面都可用
+@app.before_request
+def my_before_request():
+    user_id = session.get('user_id')
+    user = Users.query.filter_by(id=user_id).first()
+    g.user = user
+    return
+
+
 @app.context_processor
 def my_context_processor():
     user_id = session.get('user_id')
     if user_id:
-        user = Users.query.filter_by(id=user_id).first()
+        user = g.user
         return {'user': user}
     else:
         return {}
@@ -92,7 +102,8 @@ def register():
         if password1 != password2:
             return "密码不正确"
         else:
-            user = Users(username=name, tel=tel, password1=password1)
+            password = encrypt(password1)
+            user = Users(username=name, tel=tel, password1=password)
             db.session.add(user)
             db.session.commit()
             return '注册成功'
@@ -143,6 +154,11 @@ def detail(question_id):
         return redirect(url_for('detail', question_id=question_id))
 
 
+@app.route('/pyecharts/')
+def echarts():
+    from pyechrts import myecharts
+    chart = myecharts()
+    return render_template('pyecharts.html',myechart=chart)
 if __name__ == '__main__':
     # 如果入口程序为主程序
     app.run(debug=True)
