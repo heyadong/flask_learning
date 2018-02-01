@@ -20,6 +20,8 @@ with app.app_context():
 
 @app.route('/')
 def index():
+    page_id = 1
+    page_id = request.args.get('page_id')
     if session.get('user_id'):
         users = g.user
         content = {
@@ -29,9 +31,26 @@ def index():
         return render_template('indext.html', **content)
     else:
         articles = Articles.query.all()
+        article_num = len(articles)
+        page = int(article_num/5)
+        if page >= 1 and article_num % 5 == 0:
+            pages = page
+        elif page >= 1 and article_num % 5 != 0:
+            pages = page+1
+        else:
+            pages = 1
+        pages_list = range(1, pages+1)
+        page_id = request.args.get('page_id')
+        if page_id:
+            page_slice = slice(0+5*(int(page_id)-1), 5+5*(int(page_id)-1))
+            questions = articles[page_slice]
+        else:
+            questions = articles[slice(0,5)]
         content = {
-            'questions': articles,
-        }
+                'questions': questions,
+                'article_nums': article_num,
+                'pages_list': pages_list,
+            }
         return render_template('indext.html', **content)
 
 
@@ -130,6 +149,7 @@ def article():
 def login_out():
     # session.pop('user_id')
     del session['user_id']
+    session.clear()
     print(session.get('user_id'))
     return redirect(url_for('register'))
 
@@ -142,23 +162,27 @@ def detail(question_id):
         author = Users.query.filter_by(id=content.author_id).first()
         info = {'article': content,
                 'author_name': author.username,
-                'comments': content.comment
+                'comments': content.comment,
+                'comments_count': len(content.comment)
                 }
 
         return render_template('detail.html', **info)
-    else:
+    elif session.get('user_id'):
         comment = request.form.get('comment')
         comments = Comments(comment=comment, articles_id=question_id, author_id=session.get('user_id'))
         db.session.add(comments)
         db.session.commit()
         return redirect(url_for('detail', question_id=question_id))
+    return redirect(url_for('login'))
 
 
 @app.route('/pyecharts/')
 def echarts():
     from pyechrts import myecharts
     chart = myecharts()
-    return render_template('pyecharts.html',myechart=chart)
+    return render_template('pyecharts.html', myechart=chart)
+
+
 if __name__ == '__main__':
     # 如果入口程序为主程序
     app.run(debug=True)

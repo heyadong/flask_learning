@@ -12,11 +12,11 @@
                     <img src="{{url_for('static',filename='img/34.jpg')}}" alt="" class="avatar">
                 </div>
                 <div class="question-group">
-                    <p class="question-title"> <a href="{{url_for('detail',question_id=question.id)}}">{{ question.title }}</a> </p>
+                    <p class="question-title"> <a href="{{ url_for('detail',question_id=question.id)}}">{{ question.title }}</a> </p>
                     <p class="question-content">{{ question.content}} </p>
                     <div class="question-info">
                         <span class="question-author">{{ user.username }}</span>
-                        <span class="question-time">2017-12-1 15:35:01 </span>
+                        <span class="question-time">{{ question.create_time }} </span>
                     </div>
                 </div>
             </li>
@@ -30,13 +30,30 @@
                     <p class="question-content">{{ question.content}} </p>
                     <div class="question-info">
                         <span class="question-author">{{ question.article.username }}</span>
-                        <span class="question-time">2017-12-1 15:35:01 </span>
+                        <span class="question-time">{{ question.create_time }} </span>
                     </div>
                 </div>
             </li>
            {% endif %}
         {% endfor %}
     </ul>
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    <li>
+      <a href="{{url_for('index',page_id=1)}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    {% for page in pages_list %}
+      <li><a href="{{url_for('index',page_id=page)}}">{{page}}</a></li>
+    {% endfor %}
+    <li>
+      <a href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
         <!--<li>-->
             <!--<div class="avatar-group">-->
                 <!--<img src="{{url_for('static',filename='img/34.jpg')}}" alt="" class="avatar">-->
